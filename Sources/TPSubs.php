@@ -23,9 +23,10 @@ function TPcheckAdminAreas()
 	global $context;
 
 	TPcollectPermissions();
-	foreach($context['TPortal']['adminlist'] as $adm => $val)
+
+	foreach( $context['TPortal']['adminlist'] as $adm => $val)
 	{
-		if(allowedTo($adm))
+		if (allowedTo($adm))
 			return true;
 	}
 	return false;
@@ -36,6 +37,7 @@ function TPsetupAdminAreas()
 	global $context, $scripturl, $smcFunc;
 
 	$context['admin_tabs']['custom_modules'] = array();
+
 	if (allowedTo('tp_dlmanager') && !empty($context['TPortal']['show_download']))
 	{
 		$context['admin_tabs']['custom_modules']['tpdownloads'] = array(
@@ -46,6 +48,7 @@ function TPsetupAdminAreas()
 		);
 		$admin_set = true;
 	}
+
 	// any from modules?
 	$request = $smcFunc['db_query']('', '
 		SELECT modulename, subquery, permissions, languages 
@@ -56,7 +59,7 @@ function TPsetupAdminAreas()
 		)
 	);
 	
-	if($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		while($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -217,7 +220,7 @@ function tp_getbuttons()
 {
 	global $scripturl, $txt, $context;
 
-	if(loadLanguage('TPortal') == false)
+	if (loadLanguage('TPortal') == false)
 		loadLanguage('TPortal', 'english');
 
 	$buts = array();
@@ -231,7 +234,7 @@ function tp_getbuttons()
 			'sub_buttons' => array(),			
 		);
 
-	if($context['user']['is_logged'])
+	if ($context['user']['is_logged'])
 		$buts['tpeditwonarticle'] = array(
 			'title' => $txt['tp-myarticles'],
 			'href' => $scripturl . '?action=tpmod;sa=myarticles',
@@ -240,7 +243,7 @@ function tp_getbuttons()
 			'sub_buttons' => array(),			
 		);
 	
-	if(allowedTo('tp_submithtml'))
+	if (allowedTo('tp_submithtml'))
 		$buts['tpeditwonarticle']['sub_buttons']['submithtml'] = array(
 			'title' => $txt['tp-submitarticle'],
 			'href' => $scripturl . '?action=tp' . (allowedTo('tp_articles') ? 'admin' : 'mod') . ';sa=addarticle_html',
@@ -249,7 +252,7 @@ function tp_getbuttons()
 			'sub_buttons' => array(),			
 		);
 
-	if(allowedTo('tp_submitbbc'))
+	if (allowedTo('tp_submitbbc'))
 		$buts['tpeditwonarticle']['sub_buttons']['submitbbc'] = array(
 			'title' => $txt['tp-submitarticlebbc'],
 			'href' => $scripturl . '?action=tp' . (allowedTo('tp_articles') ? 'admin' : 'mod') . ';sa=addarticle_bbc',
@@ -259,7 +262,7 @@ function tp_getbuttons()
 		);
 
 	// the admin fucntions
-	if($context['user']['is_logged'])
+	if ($context['user']['is_logged'])
 		$buts['divde1'] = array(
 			'title' => '<hr />',
 			'href' => '#top',
@@ -268,7 +271,7 @@ function tp_getbuttons()
 			'sub_buttons' => array(),
 		);
 		
-	if(allowedTo('tp_blocks'))
+	if (allowedTo('tp_blocks'))
 	{
 		$buts['tpblocks'] = array(
 			'title' => $txt['permissionname_tp_blocks'],
@@ -297,7 +300,7 @@ function tp_getbuttons()
 			),			
 		);
 	}
-	if(allowedTo('tp_settings'))
+	if (allowedTo('tp_settings'))
 	{
 		$buts['tpsettings'] = array(
 			'title' => $txt['tp-settings'],
@@ -320,7 +323,7 @@ function tp_getbuttons()
 			),			
 		);
 	}
-	if(allowedTo('tp_articles'))
+	if (allowedTo('tp_articles'))
 	{
 		$buts['tparticles'] = array(
 			'title' => $txt['permissionname_tp_articles'],
@@ -349,7 +352,7 @@ function tp_getbuttons()
 			),			
 		);
 	}
-	if(allowedTo('tp_dlmanager'))
+	if (allowedTo('tp_dlmanager'))
 	{
 		$buts['tpdlmanager'] = array(
 			'title' => $txt['permissionname_tp_dlmanager'],
@@ -360,7 +363,8 @@ function tp_getbuttons()
 			),			
 		);
 	}
-	if(allowedTo('tp_shoutbox'))
+
+	if (allowedTo('tp_shoutbox'))
 	{
 		$buts['tpshoutbox'] = array(
 			'title' => $txt['shoutboxprofile'],
@@ -370,6 +374,7 @@ function tp_getbuttons()
 			'sub_buttons' => array(),			
 		);
 	}
+
 	return $buts;
 }
 
@@ -383,14 +388,14 @@ function TPcollectSnippets()
 	{
 		while (false !== ($file = readdir($handle))) 
 		{
-			if($file != '.' && $file != '..' && $file != '.htaccess' && substr($file, (strlen($file) - 10), 10) == '.blockcode')
+			if ($file != '.' && $file != '..' && $file != '.htaccess' && substr($file, (strlen($file) - 10), 10) == '.blockcode')
 			{
 				$snippet = TPparseModfile(file_get_contents($boarddir . '/tp-files/tp-blockcodes/' . $file), array('name', 'author', 'version', 'date', 'description')); 
 				$codefiles[] = array(
 					'file' => substr($file, 0, strlen($file) - 10),
-					'name' => $snippet['name'],
-					'author' => $snippet['author'],
-					'text' => $snippet['description'],
+					'name' => (!empty($snippet['name']) ? $snippet['name'] : ''),
+					'author' => (!empty($snippet['author']) ? $snippet['author'] : ''),
+					'text' =>(!empty($snippet['description']) ? $snippet['description'] : ''),
 				);
 			}
 		}
@@ -513,45 +518,48 @@ function TP_article_categories($use_sorted = false)
 				'upperpanel' => '0' ,
 				'lowerpanel' => '0',
 			);
+
 			$opts = explode('|' , $row['value7']);
-			foreach($opts as $op => $val)
+
+			foreach ($opts as $op => $val)
 			{
-				if(substr($val,0,7) == 'layout=')
+				if (substr($val,0,7) == 'layout=')
 					$options['layout'] = substr($val,7);
-				elseif(substr($val,0,6) == 'width=')
+				elseif (substr($val,0,6) == 'width=')
 					$options['width'] = substr($val,6);
-				elseif(substr($val,0,5) == 'cols=')
+				elseif (substr($val,0,5) == 'cols=')
 					$options['cols'] = substr($val,5);
-				elseif(substr($val,0,5) == 'sort=')
+				elseif (substr($val,0,5) == 'sort=')
 					$options['sort'] = substr($val,5);
-				elseif(substr($val,0,10) == 'sortorder=')
+				elseif (substr($val,0,10) == 'sortorder=')
 					$options['sortorder'] = substr($val,10);
-				elseif(substr($val,0,10) == 'showchild=')
+				elseif (substr($val,0,10) == 'showchild=')
 					$options['showchild'] = substr($val,10);
-				elseif(substr($val,0,13) == 'articlecount=')
+				elseif (substr($val,0,13) == 'articlecount=')
 					$options['articlecount'] = substr($val,13);
-				elseif(substr($val,0,10) == 'catlayout=')
+				elseif (substr($val,0,10) == 'catlayout=')
 					$options['catlayout'] = substr($val,10);
-				elseif(substr($val,0,10) == 'leftpanel=')
+				elseif (substr($val,0,10) == 'leftpanel=')
 					$options['leftpanel'] = substr($val,10);
-				elseif(substr($val,0,11) == 'rightpanel=')
+				elseif (substr($val,0,11) == 'rightpanel=')
 					$options['rightpanel'] = substr($val,11);
-				elseif(substr($val,0,9) == 'toppanel=')
+				elseif (substr($val,0,9) == 'toppanel=')
 					$options['toppanel'] = substr($val,9);
-				elseif(substr($val,0,12) == 'bottompanel=')
+				elseif (substr($val,0,12) == 'bottompanel=')
 					$options['bottompanel'] = substr($val,12);
-				elseif(substr($val,0,11) == 'upperpanel=')
+				elseif (substr($val,0,11) == 'upperpanel=')
 					$options['centerpanel'] = substr($val,11);
-				elseif(substr($val,0,11) == 'lowerpanel=')
+				elseif (substr($val,0,11) == 'lowerpanel=')
 					$options['lowerpanel'] = substr($val,11);
 			}
 			
 			// check the parent
-			if($row['value2'] == $row['id'] || $row['value2'] == '' || $row['value2'] == '0')
+			if ($row['value2'] == $row['id'] || $row['value2'] == '' || $row['value2'] == '0')
 				$row['value2'] = 9999;
+
 			// check access
 			$show = get_perm($row['value3']);
-			if($show)
+			if ($show)
 			{
 				$sorted[$row['id']] = array(
 					'id' => $row['id'],
@@ -587,7 +595,7 @@ function TP_article_categories($use_sorted = false)
 		$smcFunc['db_free_result']($request);
 	}
 	$context['TPortal']['article_categories'] = array();
-	if($use_sorted)
+	if ($use_sorted)
  	{
 		// sort them
 		if(count($sorted)>1)
@@ -624,7 +632,7 @@ class chain
        $this->primary_field = $primary_field;
        $this->parent_field = $parent_field;
        $this->sort_field = $sort_field;
-       $this->buildChain($root_id,$maxlevel);
+       $this->buildChain($root_id, $maxlevel);
    }
 
    function buildChain($rootcatid,$maxlevel)
@@ -672,13 +680,13 @@ function tp_getArticles($category = 0, $current = '-1', $output = 'echo', $displ
 	global $smcFunc, $scripturl;
 
 	// if category is not a number, return
-	if(!is_numeric($category))
+	if (!is_numeric($category))
 		return;
 
 	$articles = array();
 	$render = '';
 
-	if($output != 'array')
+	if ($output != 'array')
 		$render .= '<ul class="tp_articleList">';
 	
 	$request =  $smcFunc['db_query']('', '
@@ -690,7 +698,8 @@ function tp_getArticles($category = 0, $current = '-1', $output = 'echo', $displ
 			'cat' => $category, 'order' => $order, 'sort' => $sort,
 		)
 	);
-	if($smcFunc['db_num_rows']($request) > 0)
+
+	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -698,7 +707,7 @@ function tp_getArticles($category = 0, $current = '-1', $output = 'echo', $displ
 				$row['shortname'] = $row['id'];
 
 			$render .= '<li';
-			if($current == $row['id'] || strtolower($current) == $row['shortname']) 
+			if ($current == $row['id'] || strtolower($current) == $row['shortname']) 
 				 $render .= ' class="current_art"';
 			$render .= '><a href="' . $scripturl . '?page=' . $row['shortname'] . '">' . $row['subject'] . '</a></li>';
 			$articles[] = array(
@@ -711,12 +720,14 @@ function tp_getArticles($category = 0, $current = '-1', $output = 'echo', $displ
 		}
 		$smcFunc['db_free_result']($request);
 	}
-	if($output == 'array')
+
+	if ($output == 'array')
 		return $articles;
 
 	// render it
-	if($display == 'list')
+	if ($display == 'list')
 		echo $render;
+
 	else
 	{
 		$art = array();
@@ -729,12 +740,12 @@ function tp_getArticles($category = 0, $current = '-1', $output = 'echo', $displ
 				$curr = $i;
 			$i++;
 		}
-		if($curr > 0)
+		if ($curr > 0)
 			$art_previous = $art[$curr - 1];
 		else
 			$art_previous = $art[0];
 
-		if($curr < $i - 1)
+		if ($curr < $i - 1)
 			$art_next = $art[$curr + 1];
 		else
 			$art_next = $art[$i];
@@ -788,17 +799,17 @@ function TP_setThemeLayer($layer, $template, $subtemplate, $admin = false)
 {
 	global $context, $settings;
 
-	if($admin)
+	if ($admin)
 	{
 		loadtemplate($template);
-		if(file_exists($settings['theme_dir']. '/'. $template. '.css'))
+		if(file_exists($settings['theme_dir']. '/' . $template . '.css'))
 			$context['html_headers'] .= '<link rel="stylesheet" type="text/css" href="'. $settings['theme_url']. '/'. $template. '.css?fin11" />';
 		else
 			$context['html_headers'] .= '<link rel="stylesheet" type="text/css" href="'. $settings['default_theme_url']. '/'. $template. '.css?fin11" />';
 
-		if( loadLanguage('TPortalAdmin') == false)
+		if (loadLanguage('TPortalAdmin') == false)
 			loadlangauge('TPortalAdmin', 'english');
-		if(loadLanguage($template) == false)
+		if (loadLanguage($template) == false)
 			loadLanguage($template, 'english');
 
 		adminIndex('tportal');
@@ -808,7 +819,7 @@ function TP_setThemeLayer($layer, $template, $subtemplate, $admin = false)
 	else
 	{
 		loadtemplate($template);
-		if(loadLanguage($template) == false)
+		if (loadLanguage($template) == false)
 			loadLanguage($template, 'english');
 
 		if(file_exists($settings['theme_dir']. '/'. $template. '.css'))
@@ -883,7 +894,7 @@ if(!function_exists('htmlspecialchars_decode'))
     function htmlspecialchars_decode($string,$style = ENT_COMPAT)
     {
         $translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, $style));
-        if($style === ENT_QUOTES)
+        if ($style === ENT_QUOTES)
 			$translation['&#38;#38;#039;'] = '\''; 
 		return strtr($string,$translation);
     }
@@ -922,7 +933,7 @@ function TP_createtopic($title, $text, $icon, $board, $sticky = 0, $submitter)
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 	);
 
-	if(createPost($msgOptions, $topicOptions, $posterOptions))
+	if (createPost($msgOptions, $topicOptions, $posterOptions))
 		$topi = $topicOptions['id'];
 	else
 		$topi = 0;
@@ -976,12 +987,12 @@ function TPwysiwyg($textarea, $body, $upload = true, $uploadname, $use = 1, $sho
 			' , $use == 0 ? '
 			toggle_tpeditor_off(\''.$textarea.'\');' : '' , '
 		// ]]></script>';
-	if($showchoice)
+	if ($showchoice)
 		echo '
 		<textarea style="width: 100%; height: ' . $context['TPortal']['editorheight'] . 'px;' , $use==2 ? 'display: none;' : '' , '" name="'.$textarea.'_pure" id="'.$textarea.'_pure">'. $body .'</textarea>';
 
 	// only if you can edit your own articles
-	if($upload && allowedTo('tp_editownarticle'))
+	if ($upload && allowedTo('tp_editownarticle'))
 	{
 		// fetch all images you have uploaded
 		$imgfiles = array();
@@ -1065,7 +1076,8 @@ function TP_getmenu($menu_id)
 			'type' => 'menubox', 'subtype' => $menu_id,
 		)
 	);
-	if($smcFunc['db_num_rows']($request) > 0)
+
+	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -1073,12 +1085,13 @@ function TP_getmenu($menu_id)
 			{
 				$mtype = substr($row['value3'], 0, 4);
 				$idtype = substr($row['value3'], 4);
-				if($mtype != 'cats' && $mtype != 'arti' && $mtype != 'head' && $mtype != 'spac')
+
+				if ($mtype != 'cats' && $mtype != 'arti' && $mtype != 'head' && $mtype != 'spac')
 				{
 					$mtype = 'link';
 					$idtype = $row['value3'];
 				}
-				if($mtype == 'head')
+				if ($mtype == 'head')
 				{
 					$mtype = 'head';
 					$idtype = $row['value1'];
@@ -1089,22 +1102,24 @@ function TP_getmenu($menu_id)
 				{
 					case 'cats' :
 						$href = '
-				<a href="'. $scripturl. '?cat='.$idtype.'" ' .( $row['value2'] == '1' ? 'target="_blank"' : ''). '>'.$row['value1'].'</a>';
+				<a href="'. $scripturl. '?cat='.$idtype.'" ' .( $row['value2'] == '1' ? 'target="_blank"' : ''). '>' . $row['value1'] . '</a>';
 						break;
 					case 'arti' :
 						$href =  '
-				<a href="'. $scripturl. '?page='.$idtype.'"' .($row['value2'] == '1' ? 'target="_blank"' : '') . '>'.$row['value1'].'</a>';
+				<a href="'. $scripturl. '?page='.$idtype.'"' .($row['value2'] == '1' ? 'target="_blank"' : '') . '>' . $row['value1'] . '</a>';
 						break;
 					case 'link' :
 						$href =  '
-				<a href="'.$idtype.'"' . ($row['value2'] == '1' ? 'target="_blank"' : '') . '>'.$row['value1'].'</a>';
+				<a href="' . $idtype . '"' . ($row['value2'] == '1' ? 'target="_blank"' : '') . '>' . $row['value1'] . '</a>';
 						break;
 					default :
 						$href =  '
-				<a href="'.$idtype.'"' . ($row['value2'] == '1' ? 'target="_blank"' : '') . '>'.$row['value1'].'</a>';
+				<a href="' . $idtype . '"' . ($row['value2'] == '1' ? 'target="_blank"' : '') . '>' . $row['value1'] . '</a>';
 						break;
 				}
-				if(in_array($mtype, array('cats', 'arti', 'link')))
+
+				if (in_array($mtype, array('cats', 'arti', 'link')))
+				{
 					$menu[] = array(
 						'id' => $row['id'],
 						'name' => $row['value1'],
@@ -1112,10 +1127,12 @@ function TP_getmenu($menu_id)
 						'sub' => $row['value4'],
 						'link' => $href,
 					);
+				}
 			}
 		}
 		$smcFunc['db_free_result']($request);
 	}
+
 	return $menu;
 }
 
@@ -1124,7 +1141,7 @@ function tp_fetchpermissions($perms)
 	global $txt, $smcFunc;
 	
 	$perm = array();
-	if(is_array($perms))
+	if (is_array($perms))
 	{
 		$request = $smcFunc['db_query']('', '
 			SELECT p.permission, m.group_name as groupName, p.id_group as ID_GROUP 
@@ -1167,28 +1184,33 @@ function tp_fetchpermissions($perms)
 	{
 		$names = array();
 		$request = $smcFunc['db_query']('', '
-			SELECT m.group_name as groupName, m.id_group as ID_GROUP 
+			SELECT m.group_name, m.id_group
 			FROM {db_prefix}membergroups as m
 			WHERE m.min_posts = {int:minpost}
 			ORDER BY m.group_name ASC',
-			array('minpost' => -1)
+			array(
+				'minpost' => -1
+			)
 		);
-		if($smcFunc['db_num_rows']($request) > 0)
+
+		if ($smcFunc['db_num_rows']($request) > 0)
 		{
-			// set regaular members
+			// set regular members
 			$names[0] = array(
 				'id' => 0,				
 				'name' => $txt['members'],				
 			);
+
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$names[$row['ID_GROUP']] = array(
-					'id' => $row['ID_GROUP'],				
-					'name' => $row['groupName'],				
+				$names[$row['id_group']] = array(
+					'id' => $row['id_group'],				
+					'name' => $row['group_name'],				
 				);
 			}
 			$smcFunc['db_free_result']($request);
 		}
+
 		return $names;
 	}
 }
@@ -1199,31 +1221,40 @@ function tp_fetchboards()
 
 	// get all boards for board-spesific news
 	$request =  $smcFunc['db_query']('', '
-		SELECT id_board as ID_BOARD,name 
+		SELECT id_board, name 
 		FROM {db_prefix}boards 
 		WHERE 1',
 		array()
 	);
+
 	$boards = array();
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
-		while($row = $smcFunc['db_fetch_assoc']($request))
-			$boards[] = array('id' => $row['ID_BOARD'], 'name' => $row['name']);
-
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$boards[] = array(
+				'id' => $row['id_board'],
+				'name' => $row['name']
+			);
+		}
 		$smcFunc['db_free_result']($request);
 	}
 	return $boards;
 }
 
-function tp_hidepanel($id, $inline = false, $string = false, $margin='')
+function tp_hidepanel($id, $inline = false, $string = false, $margin = '')
 {
 	global $context, $settings;
-	
+
+	if (empty($id))
+		$id = 0;
+
 	$what = '
 	<a style="' . (!$inline ? 'float: right;' : '') . ' cursor: pointer;" name="toggle_'.$id.'" onclick="togglepanel(\''.$id.'\')">
-		<img id="toggle_' . $id . '" src="' . $settings['tp_images_url'] . '/TPupshrink' . (in_array($id, $context['tp_panels']) ? '2' : '') . '.gif" ' . (!empty($margin) ? 'style="margin: '.$margin.';"' : '') . 'alt="*" />
+		<img id="toggle_' . $id . '" src="' . $settings['tp_images_url'] . '/TPupshrink' . (in_array($id, $context['tp_panels']) ? '2' : '') . '.gif" ' . (!empty($margin) ? 'style="margin: ' . $margin . ';"' : '') . 'alt="*" />
 	</a>';
-	if($string)
+
+	if ($string)
 		return $what;
 	else
 		echo $what;
@@ -1232,9 +1263,12 @@ function tp_hidepanel($id, $inline = false, $string = false, $margin='')
 function tp_hidepanel2($id, $id2, $alt)
 {
 	global $txt, $context, $settings;
-	
+
+	if (empty($id))
+		$id = 0;
+
 	$what = '
-	<a title="'.$txt[$alt].'" style="cursor: pointer;" name="toggle_'.$id.'" onclick="togglepanel(\''.$id.'\');togglepanel(\''.$id2.'\')">
+	<a title="'.$txt[$alt].'" style="cursor: pointer;" name="toggle_'.$id.'" onclick="togglepanel(\'' . $id . '\');togglepanel(\'' . $id2 . '\')">
 		<img id="toggle_' . $id . '" src="' . $settings['tp_images_url'] . '/TPupshrink' . (in_array($id, $context['tp_panels']) ? '2' : '') . '.gif" alt="*" />
 	</a>';
 	
@@ -1249,18 +1283,24 @@ function tp_collectArticleAttached($art)
 	$context['TPortal']['illustrations'] = array();
 	$context['TPortal']['illustrations_align'] = array();
 	$context['TPortal']['illustrations_text'] = array();
-	
-	if(is_array($art))
+
+	// !!!
+	// Check if $art is not valid data?
+
+	if (is_array($art))
 	{
 		$tagquery = 'FIND_IN_SET(subtype2, "' . implode(',', $art) .'")';
 		$request =  $smcFunc['db_query']('', '
-			SELECT * FROM {db_prefix}tp_variables 
+			SELECT *
+			FROM {db_prefix}tp_variables 
 			WHERE type = {string:type} 
-			AND value5 = {int:val5}
-			AND {string:tag} 
+				AND value5 = {int:val5}
+				AND {string:tag} 
 			ORDER BY subtype2 ASC',
 			array(
-				'type' => 'articleimage', 'val5' => 0, 'tag' => $tagquery,
+				'type' => 'articleimage',
+				'val5' => 0,
+				'tag' => $tagquery,
 			)
 		);
 	}
@@ -1271,15 +1311,16 @@ function tp_collectArticleAttached($art)
 			AND subtype2 = {int:subtype} 
 			ORDER BY value5 ASC',
 			array(
-				'type' => 'articleimage', 'subtype' => $art,
+				'type' => 'articleimage',
+				'subtype' => $art,
 			)
 		);
 
-	if($smcFunc['db_num_row']($request) > 0)
+	if ($smcFunc['db_num_row']($request) > 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			if(is_array($art))
+			if (is_array($art))
 			{
 				$context['TPortal']['illustrations'][$row['subtype2']][$row['value5']] = $row['value1'];
 				$context['TPortal']['illustrations_align'][$row['subtype2']][$row['value5']] = $row['value2'];
@@ -1354,7 +1395,7 @@ function TP_fetchprofile_areas2($memID)
 			'active' => 1
 		)
 	);
-	if($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		while($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -1370,6 +1411,9 @@ function TP_fetchprofile_areas2($memID)
 
 function tp_sanitize($value, $strict = false)
 {
+	// !!!
+	// $strict is not used in the return.
+
 	return strip_tags($value);
 }
 
@@ -1377,20 +1421,24 @@ function get_perm($perm, $moderate = '')
 {
 	global $context, $user_info;
 
+	// !!!
+	// $user_info is in global scope but never used in this function.
+
 	$show = false;
 	$acc = explode(',', $perm);
-	foreach($acc as $grp => $val)
+
+	foreach ($acc as $grp => $val)
 	{
-		if(in_array($val, $user_info['groups']) && $val > -2)
+		if (in_array($val, $user_info['groups']) && $val > -2)
 			$show = true;
 	}
 
 	// admin sees all
-	if($context['user']['is_admin'])
+	if ($context['user']['is_admin'])
 		$show = true;
 	
 	// permission holds true? allow them as well!
-	if($moderate != '' && allowedTo($moderate))
+	if ($moderate != '' && allowedTo($moderate))
 		$show = true;
 
 	return $show;
@@ -1398,13 +1446,16 @@ function get_perm($perm, $moderate = '')
 
 function tpsort($a, $b)
 {
-	return strnatcasecmp($b["timestamp"], $a["timestamp"]);
+	return strnatcasecmp($b['timestamp'], $a['timestamp']);
 }
 
 // add to the linktree
-function TPadd_linktree($url,$name)
+function TPadd_linktree($url, $name)
 {
 	global $context;
+
+	if (empty($url) && empty($name))
+		return;
 
 	$context['linktree'][] = array('url' => $url, 'name' => $name);
 }
@@ -1424,7 +1475,8 @@ function TPortal()
 	global $context;
 
 	// For wireless, we use the Wireless template...
-	if (WIRELESS){
+	if (WIRELESS)
+	{
 		loadTemplate('TPwireless');
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_tp';
 	}
@@ -1432,7 +1484,7 @@ function TPortal()
 		loadTemplate('TPortal');
 }
 
-function normalizeNewline($text)
+function normalizeNewline($text = '')
 {
 	str_replace("\r\n", "\n", $text);
 	str_replace("\r", "\n", $text);
@@ -1536,7 +1588,7 @@ function tp_renderarticle($intro = '')
 	global $context, $txt, $scripturl, $boarddir, $smcFunc;
 	
 	// just return if data is missing
-	if(!isset($context['TPortal']['article']))
+	if (!isset($context['TPortal']['article']))
 		return;
 
 	echo '
@@ -1584,8 +1636,10 @@ function tp_renderarticle($intro = '')
 	}
 	echo '
 	</div>';
+
 	return;
 }
+
 function tp_renderblockarticle()
 {
 
@@ -1597,28 +1651,39 @@ function tp_renderblockarticle()
 
 	echo '
 	<div class="article_inner">';
-	if($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype'] == 'php')
+
+	// !!!
+	// Maybe remove the starting and ending php tags?
+	if ($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype'] == 'php')
 		eval($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['body']);
-	elseif($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype'] == 'import')
+
+	elseif ($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype'] == 'import')
 	{
-		if(!file_exists($boarddir. '/' . $context['TPortal']['blockarticles'][$context['TPortals']['blockarticle']]['fileimport']))
+		if (!file_exists($boarddir. '/' . $context['TPortal']['blockarticles'][$context['TPortals']['blockarticle']]['fileimport']))
 			echo '<em>' , $txt['tp-cannotfetchfile'] , '</em>';
+
 		else
 			include($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['fileimport']);
 	}
-	elseif($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype']=='bbc')
+	elseif( $context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['rendertype'] == 'bbc')
 		echo parse_bbc($context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['body']);
+
 	else
 		echo $context['TPortal']['blockarticles'][$context['TPortal']['blockarticle']]['body'];
+
 	echo '
 	</div>';
+
 	return;
 }
 
 function render_template($code, $render = true)
 {
 	$ncode = 'echo \'' . str_replace(array('{','}'),array("', ","(), '"),$code).'\';';
-	if($render)
+
+	// !!!
+	// Maybe remove the starting and ending php tags?
+	if ($render)
 		eval($ncode);
 	else
 		return $ncode;
@@ -1626,15 +1691,19 @@ function render_template($code, $render = true)
 
 function render_template_layout($code, $prefix = '')
 {
-	$ncode = 'echo \'' . str_replace(array('{','}'),array("', " . $prefix , "(), '"),$code).'\';';
+	$ncode = 'echo \'' . str_replace(array('{','}'),array("', " . $prefix , "(), '"), $code) . '\';';
+
+	// !!!
+	// Maybe remove the starting and ending php tags?
 	eval($ncode);
 }
 
-function tp_hidebars($what = 'all' )
+function tp_hidebars($what = 'all')
 {
 	global $context;
 
-	if($what == 'all'){
+	if ($what == 'all')
+	{
 		$context['TPortal']['leftpanel'] = 0;
 		$context['TPortal']['centerpanel'] = 0;
 		$context['TPortal']['rightpanel'] = 0;
@@ -1642,17 +1711,17 @@ function tp_hidebars($what = 'all' )
 		$context['TPortal']['toppanel'] = 0;
 		$context['TPortal']['lowerpanel'] = 0;
 	}
-	elseif($what == 'left')
+	elseif( $what == 'left')
 		$context['TPortal']['leftpanel'] = 0;
-	elseif($what=='right')
+	elseif ($what=='right')
 		$context['TPortal']['rightpanel'] = 0;
-	elseif($what=='center')
+	elseif ($what=='center')
 		$context['TPortal']['centerpanel'] = 0;
-	elseif($what=='bottom')
+	elseif ($what=='bottom')
 		$context['TPortal']['bottompanel'] = 0;
-	elseif($what=='top')
+	elseif ($what=='top')
 		$context['TPortal']['toppanel'] = 0;
-	elseif($what=='lower')
+	elseif ($what=='lower')
 		$context['TPortal']['lowerpanel'] = 0;
 }
 
@@ -1664,87 +1733,97 @@ function get_blockaccess($what, $front = false, $whichbar)
 	$show = false;
 
 	// if empty return
-	if($what=='')
+	if ($what == '')
 	{
-		$show=false;
+		$show = false;
 		return $show;
 	}
+
     // split up the access level
     $levels = explode('|', $what);
-    foreach($levels as $level => $code){
+
+    foreach ($levels as $level => $code)
+	{
 		$precode = substr($code,0, 6);
 		$body = explode(",", substr($code, 6));
-		if($precode == 'actio=')
+
+		if ($precode == 'actio=')
 		{
 			// special case for frontpage
-			if(in_array('frontpage', $body) && !isset($_GET['action']) && !isset($_GET['board']) && !isset($_GET['topic']) && !isset($_GET['page']) && !isset($_GET['cat']))
+			if (in_array('frontpage', $body) && !isset($_GET['action']) && !isset($_GET['board']) && !isset($_GET['topic']) && !isset($_GET['page']) && !isset($_GET['cat']))
 				$show = true;
 			// normal
-			if(in_array($context['TPortal']['action'], $body) || (isset($_GET['action']) && in_array($_GET['action'], $body)))
+			if (in_array($context['TPortal']['action'], $body) || (isset($_GET['action']) && in_array($_GET['action'], $body)))
 				$show = true;
 			// special for forum
-			if(in_array('forumall', $body) && $context['TPortal']['in_forum'])
+			if (in_array('forumall', $body) && $context['TPortal']['in_forum'])
 				$show = true;
 			// if we are on post screen
-			if(isset($_GET['action']) && $_GET['action'] == 'post2' && in_array('post', $body))
+			if (isset($_GET['action']) && $_GET['action'] == 'post2' && in_array('post', $body))
 				$show = true;
 
 			// special for allpages!
 			if(in_array('allpages', $body))
 				$show = true;
 		}
-		elseif($precode == 'board='){
-			if(isset($_GET['board']) && in_array($_GET['board'], $body))
-				$show = true;
-			// show on all boards
-			if(isset($_GET['board']) && in_array('-1', $body))
-				$show = true;
-		}
-		elseif($precode == 'dlcat='){
-			if(isset($_GET['dl']) && substr($_GET['dl'], 0, 3) == 'cat' && in_array(substr($_GET['dl'], 3), $body))
-				$show = true;
-		}
-		elseif($precode == 'tpmod='){
-			if($context['TPortal']['action'] == 'tpmod' && isset($_GET[$body]))
-				$show = true;
-		}
-		elseif($precode == 'custo='){
-			if(isset($_GET['action']) && in_array($_GET['action'], $body))
-				$show = true;
-		}
-		elseif($precode == 'tpage=')
+		elseif ($precode == 'board=')
 		{
-			if(isset($context['TPortal']['currentpage']))
+			if( isset($_GET['board']) && in_array($_GET['board'], $body))
+				$show = true;
+
+			// show on all boards
+			if (isset($_GET['board']) && in_array('-1', $body))
+				$show = true;
+		}
+		elseif ($precode == 'dlcat=')
+		{
+			if (isset($_GET['dl']) && substr($_GET['dl'], 0, 3) == 'cat' && in_array(substr($_GET['dl'], 3), $body))
+				$show = true;
+		}
+		elseif ($precode == 'tpmod=')
+		{
+			if ($context['TPortal']['action'] == 'tpmod' && isset($_GET[$body]))
+				$show = true;
+		}
+		elseif ($precode == 'custo=')
+		{
+			if (isset($_GET['action']) && in_array($_GET['action'], $body))
+				$show = true;
+		}
+		elseif ($precode == 'tpage=')
+		{
+			if (isset($context['TPortal']['currentpage']))
 			{
-				if(in_array($context['TPortal']['currentpage'], $body))
+				if (in_array($context['TPortal']['currentpage'], $body))
 					$show = true;
 			}
-			if($front && in_array($context['TPortal']['featured_article'], $body))
+			if ($front && in_array($context['TPortal']['featured_article'], $body))
 				$show = true;
 		}
-		elseif($precode == 'tpcat='){
-			if(isset($_GET['cat']) && !isset($_GET['action']) && in_array($_GET['cat'], $body))
+		elseif($precode == 'tpcat=')
+		{
+			if (isset($_GET['cat']) && !isset($_GET['action']) && in_array($_GET['cat'], $body))
 				$show = true;
 			// also on the actual category
-			if(!empty($context['TPortal']['parentcat']) && in_array($context['TPortal']['parentcat'], $body))
+			if (!empty($context['TPortal']['parentcat']) && in_array($context['TPortal']['parentcat'], $body))
 				$show = true;
 		}
 		elseif($precode == 'tlang=')
 		{
 			// if a language IS selected, use ONLY that, otherwise it will abide to the others
-			if(in_array($mylang, $body))
+			if (in_array($mylang, $body))
 				$show_lang = true;
 			else
 				$show_lang = false;
 		}
 		// code for modules
-		elseif($precode == 'modul='){
-			if($context['TPortal']['action'] == 'tpmod' && isset($_GET['dl']))
+		elseif ($precode == 'modul='){
+			if ($context['TPortal']['action'] == 'tpmod' && isset($_GET['dl']))
 				$show = true;
 		}
     }
 	// check for language option
-	if(isset($show_lang) && $show == true)
+	if (isset($show_lang) && $show == true)
 	{
 		$show = $show_lang;
 	}
@@ -1758,8 +1837,9 @@ function TPgetlangOption($langlist, $set)
 
 	$setlang = '';
 
-	for($i=0; $i < $num ; $i = $i + 2){
-		if($lang[$i] == $set)
+	for ($i=0; $i < $num ; $i = $i + 2)
+	{
+		if ($lang[$i] == $set)
 			$setlang = $lang[$i+1];
 	}
 
@@ -1772,7 +1852,8 @@ function category_featured()
 	global $context;
 
 	unset($context['TPortal']['article']);
-	if(empty($context['TPortal']['category']['featured']))
+
+	if (empty($context['TPortal']['category']['featured']))
 		return;
 
 	$context['TPortal']['article'] = $context['TPortal']['category']['featured'];
@@ -1782,10 +1863,10 @@ function category_featured()
 	else
 	{
 		// check if theme has its own
-		if(function_exists('ctheme_article_renders'))
-			render_template(ctheme_article_renders($context['TPortal']['category']['options']['catlayout'],false,true));
+		if (function_exists('ctheme_article_renders'))
+			render_template(ctheme_article_renders($context['TPortal']['category']['options']['catlayout'], false, true));
 		else
-			render_template(article_renders($context['TPortal']['category']['options']['catlayout'],false,true));
+			render_template(article_renders($context['TPortal']['category']['options']['catlayout'], false, true));
 	}
 }
 
@@ -1795,10 +1876,10 @@ function category_col1()
 	global $context;
 
 	unset($context['TPortal']['article']);
-	if(!isset($context['TPortal']['category']['col1']))
+	if (!isset($context['TPortal']['category']['col1']))
 		return;
 
-	foreach($context['TPortal']['category']['col1'] as $article => $context['TPortal']['article'])
+	foreach ($context['TPortal']['category']['col1'] as $article => $context['TPortal']['article'])
 	{
 		if(!empty($context['TPortal']['article']['template']))
 			render_template($context['TPortal']['article']['template']);
@@ -1819,7 +1900,7 @@ function category_col2()
 	global $context;
 
 	unset($context['TPortal']['article']);
-	if(!isset($context['TPortal']['category']['col2']))
+	if (!isset($context['TPortal']['category']['col2']))
 		return;
 
 	foreach($context['TPortal']['category']['col2'] as $article => $context['TPortal']['article'])
@@ -1828,7 +1909,7 @@ function category_col2()
 			render_template($context['TPortal']['article']['template']);
 		else
 		{
-			if(function_exists('ctheme_article_renders'))
+			if (function_exists('ctheme_article_renders'))
 				render_template(ctheme_article_renders($context['TPortal']['category']['options']['catlayout'], false));
 			else
 				render_template(article_renders($context['TPortal']['category']['options']['catlayout'], false));
@@ -1839,17 +1920,16 @@ function category_col2()
 
 function startElement($parser, $tagName, $attrs)
 {
-
 	// The function used when an element is encountered
 	global $insideitem, $tag;
 
-	if($insideitem)
+	if ($insideitem)
 		$tag = $tagName;
-	elseif($tagName == "ITEM")
+	elseif ($tagName == "ITEM")
 		$insideitem = true;
-	elseif($tagName == "ENTRY")
+	elseif ($tagName == "ENTRY")
 		$insideitem = true;
-	elseif($tagName == "IMAGE")
+	elseif ($tagName == "IMAGE")
 		$insideitem = true;
 }
 
@@ -1954,7 +2034,6 @@ function endElement($parser, $tagName)
 
 function TPparseRSS($override = '', $encoding = 0)
 {
-
 	global $context;
 
 	$backend = isset($context['TPortal']['rss']) ? $context['TPortal']['rss'] : '';
@@ -1998,14 +2077,15 @@ function TPadminIndex($tpsub = '', $module_admin = false)
 {
 	global $txt, $context, $scripturl, $smcFunc;
 
-	if(loadLanguage('TPortalAdmin') == false)
+	if (loadLanguage('TPortalAdmin') == false)
 		loadLanguage('TPortalAdmin', 'english');
 
-	if($module_admin)
+	if ($module_admin)
 	{
 		// make sure tpadmin is still active
 		$_GET['action'] = 'tpadmin';
 	}
+
 	$context['admin_tabs'] = array();
 	$context['admin_header']['tp_news'] = $txt['tp-adminnews1'];
 	$context['admin_header']['tp_settings'] = $txt['tp-adminheader1'];
@@ -2114,13 +2194,14 @@ function TPadminIndex($tpsub = '', $module_admin = false)
 	}
 	// collect modules and their permissions	
 	$result =  $smcFunc['db_query']('', '
-		SELECT * FROM {db_prefix}tp_modules 
+		SELECT *
+		FROM {db_prefix}tp_modules 
 		WHERE 1',
 		array()
 	);
-	if($smcFunc['db_num_rows']($result) > 0)
+	if ($smcFunc['db_num_rows']($result) > 0)
 	{
-		while($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			$context['TPortal']['admmodules'][] = $row;
 		}
@@ -2165,7 +2246,7 @@ function tp_collectArticleIcons()
 			'thvar' => 'name', 'tbvar' => 'images_url', 'mem_id' => 0,
 		)
 	);
-	if(is_resource($request) && $smcFunc['db_num_rows']($request) > 0)
+	if (is_resource($request) && $smcFunc['db_num_rows']($request) > 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -2260,6 +2341,9 @@ function tp_recentTopics($num_recent = 8, $exclude_boards = null, $output_method
 		$exclude_boards = array($modSettings['recycle_board']);
 	else
 		$exclude_boards = empty($exclude_boards) ? array() : $exclude_boards;
+
+	// !!!
+	// Why the use of SMF 1.0/1.1 naming scheme?
 
 	// Find all the posts in distinct topics.  Newer ones will have higher IDs.
 	$request = $smcFunc['db_query']('', '
@@ -2431,6 +2515,7 @@ function tpattach()
 
 	if (!$context['browser']['is_gecko'])
 		header('Content-Transfer-Encoding: binary');
+
 	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 525600 * 60) . ' GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($filename)) . ' GMT');
 	header('Accept-Ranges: bytes');
@@ -2524,8 +2609,8 @@ function tpattach()
 	obExit(false);
 }
 
-function art_recentitems($max = 5, $type = 'date' ){
-
+function art_recentitems($max = 5, $type = 'date' )
+{
 	global $smcFunc;
 
 	$now = forum_time();
@@ -2553,7 +2638,8 @@ function art_recentitems($max = 5, $type = 'date' ){
 			)
 		);
 
-	if($smcFunc['db_num_rows']($request) > 0){
+	if ($smcFunc['db_num_rows']($request) > 0)
+	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$rat = explode(',', $row['rating']);
@@ -2592,8 +2678,10 @@ function dl_recentitems($number = 8, $sort = 'date', $type = 'array', $cat = 0)
 
 	// collect all categories to search in
 	$mycats = array();
+
 	dl_getcats();
-	if($cat > 0)
+
+	if ($cat > 0)
 		$mycats[] = $cat;
 	else
 	{
@@ -2601,11 +2689,11 @@ function dl_recentitems($number = 8, $sort = 'date', $type = 'array', $cat = 0)
 			$mycats[] = $ca['id'];
 	}
 	
-	if($sort == 'authorID')
+	if ($sort == 'authorID')
 		$sort = 'author_id';
 
 	// empty?
-	if(sizeof($mycats) > 0)
+	if (sizeof($mycats) > 0)
 	{
 		$context['TPortal']['dlrecenttp'] = array();
 		// decide what to sort from
@@ -2644,7 +2732,7 @@ function dl_recentitems($number = 8, $sort = 'date', $type = 'array', $cat = 0)
 				{raw:sort} LIMIT {int:limit}',
 				array('type' => 'dlitem', 'cat' => $mycats, 'sort' => $sortstring, 'limit' => $number)
 			);
-		if($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db_num_rows']($request) > 0)
 		{
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -2744,8 +2832,8 @@ function dl_getcats()
 
 function TP_bbcbox($input)
 {	
-   echo'<div id="tp_messbox"></div>';
-   echo'<div id="tp_smilebox"></div>';
+   echo '<div id="tp_messbox"></div>';
+   echo '<div id="tp_smilebox"></div>';
 
    echo template_control_richedit($input, 'tp_messbox', 'tp_smilebox');
 }
@@ -2860,6 +2948,9 @@ function get_grps($save = true, $noposts = true)
 			'posts' => '-1'
 		);
 	}
+
+	// !!!
+	// SMF 1.0/1.1 naming?
     $request = $smcFunc['db_query']('', '
         SELECT id_group as ID_GROUP, group_name as groupName, min_posts as minPosts
         FROM {db_prefix}membergroups
@@ -2883,6 +2974,8 @@ function get_grps($save = true, $noposts = true)
 
 function tp_convertphp($code, $reverse = false)
 {
+	// !!!
+	// These return the same output.
 
 	if(!$reverse)
 	{
@@ -2906,6 +2999,7 @@ function tp_getDLcats()
 		array('dlcat' => 'dlcat')
 	);
 	$count = 0;
+
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		while($row = $smcFunc['db_fetch_assoc']($request))
@@ -2947,11 +3041,14 @@ function updateTPSettings($addSettings, $check = false)
 	if (empty($addSettings) || !is_array($addSettings))
 		return;
 
-	if($check)
+	if ($check)
 	{
 		foreach ($addSettings as $variable => $value)
 		{
-			$request = $smcFunc['db_query']('', 'SELECT value FROM {db_prefix}tp_settings	WHERE name = "' . $variable . '"');
+			$request = $smcFunc['db_query']('', '
+				SELECT value
+				FROM {db_prefix}tp_settings
+				WHERE name = "' . $variable . '"');
 
 			if($smcFunc['db_num_rows']($request)==0)
 			{
