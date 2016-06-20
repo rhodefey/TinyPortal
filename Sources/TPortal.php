@@ -1,7 +1,7 @@
 <?php
 /**
  * @package TinyPortal
- * @version 1.1
+ * @version 1.2
  * @author IchBin - http://www.tinyportal.net
  * @founder Bloc
  * @license MPL 2.0
@@ -189,34 +189,7 @@ function TP_loadCSS()
 	<link rel="stylesheet" type="text/css" href="' . $settings['theme_url'] . '/css/tp-style.css?fin11" />';
 	else
 		$context['html_headers'] .= '
-	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/tp-style.css?fin11" />
-	<style type="text/css">
-		.tp_half h3.titlebg
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat -10px -200px;
-		}
-		.tp_half h3.titlebg span.l
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat 0 -200px;
-		}
-		.tp_half h3.titlebg span.r
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat 100% -200px;
-		}
-
-		.tp_half h3.catbg
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat -10px -160px;
-		}
-		.tp_half h3.catbg span.l
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat 0 -160px;
-		}
-		.tp_half h3.catbg span.r
-		{
-			background: url('.$settings['images_url'].'/theme/main_block.png) no-repeat 100% -160px;
-		}
-	</style>';
+	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/tp-style.css?fin11" />';
 
 	if(!empty($context['TPortal']['padding']))
 		$context['html_headers'] .= '
@@ -566,6 +539,8 @@ function doTPpage()
 	{
 		$page = tp_sanitize($_GET['page']);
 		$pag = is_numeric($page) ? 'art.id = {int:page}' : 'art.shortname = {string:page}';
+		
+		$_SESSION['login_url'] = $scripturl . '?page=' . $page; 
 
 		if(allowedTo('tp_articles'))
         {

@@ -4,7 +4,7 @@
     <name>TinyPortal</name>
     <id>bloc:tinyportal</id>
     <type>modification</type>
-    <version>1.111</version>
+    <version>1.2</version>
 
 	<install for="2.0 - 2.0.99">
 		<redirect url="">Installed!</redirect>
@@ -13,13 +13,13 @@
         <require-dir name="tp-downloads" destination="$boarddir" />
         <require-dir name="tp-images" destination="$boarddir" />
 		<require-dir name="tp-files" destination="$boarddir" />
-        <readme type="inline">Installing TinyPortal v1.1 for SMF2.0</readme>
+        <readme type="inline">Installing TinyPortal v1.2 for SMF2.0</readme>
 		<modification>install.xml</modification>
 		<database>install.php</database>
 		<code>do_hooks.php</code>
     </install>
 	<uninstall for="2.0 - 2.0.99">
-		<readme type="inline">Uninstalling TinyPortal v1.1 for SMF2.0</readme>
+		<readme type="inline">Uninstalling TinyPortal v1.2 for SMF2.0</readme>
 		<modification reverse="true">install.xml</modification>
 		<remove-file name="$sourcedir/TPassimilate.php" />
 		<remove-file name="$sourcedir/TPcommon.php" />
@@ -45,17 +45,17 @@
 		<remove-file name="$themedir/css/tp-style.css" />
 		<remove-file name="$themedir/scripts/TPShout.js" />
 		<remove-file name="$languagedir/TPdlmanager.english.php" />
-		<remove-file name="$languagedir/TPdlmanager.english-uf8.php" />
+		<remove-file name="$languagedir/TPdlmanager.english-utf8.php" />
 		<remove-file name="$languagedir/TPhelp.english.php" />
-		<remove-file name="$languagedir/TPhelp.english-uf8.php" />
+		<remove-file name="$languagedir/TPhelp.english-utf8.php" />
 		<remove-file name="$languagedir/TPmodules.english.php" />
-		<remove-file name="$languagedir/TPmodules.english-uf8.php" />
+		<remove-file name="$languagedir/TPmodules.english-utf8.php" />
 		<remove-file name="$languagedir/TPortal.english.php" />
-		<remove-file name="$languagedir/TPortal.english-uf8.php" />
+		<remove-file name="$languagedir/TPortal.english-utf8.php" />
 		<remove-file name="$languagedir/TPortalAdmin.english.php" />
-		<remove-file name="$languagedir/TPortalAdmin.english-uf8.php" />
+		<remove-file name="$languagedir/TPortalAdmin.english-utf8.php" />
 		<remove-file name="$languagedir/TPShout.english.php" />
-		<remove-file name="$languagedir/TPShout.english-uf8.php" />
+		<remove-file name="$languagedir/TPShout.english-utf8.php" />
 		<code>do_hooks.php</code>
     </uninstall>
     

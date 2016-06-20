@@ -1,7 +1,7 @@
 <?php
 /**
  * @package TinyPortal
- * @version 1.1
+ * @version 1.2
  * @author IchBin - http://www.tinyportal.net
  * @founder Bloc
  * @license MPL 2.0
@@ -130,8 +130,8 @@ function template_category()
 	$grid = tp_grids();
 
 	// fallback
-	if(!isset($category['options']['catlayout']))
-		$category['options']['catlayout']=1;
+	if(!isset($category['options']['layout']))
+		$category['options']['layout']=1;
 
 	// any pageindex?
 	if(!empty($context['TPortal']['pageindex']))

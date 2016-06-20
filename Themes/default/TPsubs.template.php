@@ -1,7 +1,7 @@
 <?php
 /**
  * @package TinyPortal
- * @version 1.1
+ * @version 1.2
  * @author IchBin - http://www.tinyportal.net
  * @founder Bloc
  * @license MPL 2.0
@@ -155,13 +155,13 @@ function TPortal_recentbox()
 
 	// leave out the recycle board, if any
 	if(isset($modSettings['recycle_board']))
-		$bb = array($modSettings['recycle_board']);
+		$bb = $modSettings['recycle_board'];
 	else
-		$bb = array();
+		$bb = 0;
 
 	if($context['TPortal']['useavatar'] == 0)
 	{
-	$what = ssi_recentTopics($context['TPortal']['recentboxnum'], $bb, 'array');
+	$what = ssi_recentTopics($num_recent = $context['TPortal']['recentboxnum'] , $exclude_boards = array($bb),  $output_method = 'array');
 
 		// Output the topics
 		echo '
@@ -185,7 +185,7 @@ function TPortal_recentbox()
 	}
 	else
 	{
-		$what = tp_recentTopics($context['TPortal']['recentboxnum'], $bb, 'array');
+		$what = tp_recentTopics($num_recent = $context['TPortal']['recentboxnum'], $exclude_boards = array($bb), 'array');
 
 		// Output the topics
 		$coun = 1;
@@ -300,10 +300,15 @@ function TPortal_userbox()
 
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
+	
 	if ($context['user']['is_logged'])
 	{
+		
+		if (!empty($context['user']['avatar']) &&  isset($context['TPortal']['userbox']['avatar']))
+			echo '
+				<span class="tpavatar">', $context['user']['avatar']['image'], '</span>';
 		echo '
-		<h4>', $context['user']['name'], '</h4>
+		<strong>', $context['user']['name'], '</strong>
 		<ul class="reset">';
 
 		// Only tell them about their messages if they can read their messages!
@@ -343,6 +348,7 @@ function TPortal_userbox()
 			<li>' .$bullet2.$txt['tp-loggedintime'] . '</li>
 			<li>'.$bullet2.$context['user']['total_time_logged_in']['days'] . $txt['tp-acronymdays']. $context['user']['total_time_logged_in']['hours'] . $txt['tp-acronymhours']. $context['user']['total_time_logged_in']['minutes'] .$txt['tp-acronymminutes'].'</li>';
 		}
+		if (isset($context['TPortal']['userbox']['time']))
 		echo '
 			<li>' . $bullet2.$context['current_time'].' <hr></li>';
 		
@@ -800,7 +806,7 @@ function template_nolayer_above()
 	<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-		<meta name="keywords" content="Tinyportal, themes, Bloc" />
+		<meta name="keywords" content="' . $context['meta_keywords'] . '" />
 		<title>' , $context['page_title'] , '</title>
 		' , $context['tp_html_headers'] , '
 	</head>
@@ -809,7 +815,7 @@ function template_nolayer_above()
 
 function template_nolayer_below()
 {
-	echo '<small id="nolayer_copyright">',theme_copyright(),'<br />',tportal_version(),'</small>
+	echo '<small id="nolayer_copyright">',theme_copyright(),'</small>
 	</div></body></html>';
 }
 
@@ -1848,7 +1854,7 @@ function template_blockarticle()
 }
 function blockarticle_renders()
 {
-	echo ' 
+	$code = '
 	<div class="blockarticle render1">
 		<div class="article_info">
 			{blockarticle_author} 
@@ -1859,7 +1865,9 @@ function blockarticle_renders()
 		<div class="article_padding">{blockarticle_moreauthor}</div>
 	</div>	
 		';
+	return $code;
 }
+ 
 
 function blockarticle_date($render = true)
 {

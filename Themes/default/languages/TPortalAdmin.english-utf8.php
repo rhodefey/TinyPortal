@@ -1,7 +1,7 @@
 <?php
 /**
  * @package TinyPortal
- * @version 1.1
+ * @version 1.2
  * @author IchBin - http://www.tinyportal.net
  * @founder Bloc
  * @license MPL 2.0
@@ -542,7 +542,7 @@ $txt['tp-helpsettings'] = 'Here you can tweak various general settings for the p
 $txt['tp-helppanels'] = 'Blocks are located in panels, and each panel has its own set of settings.';
 $txt['tp-helpartsettings'] = 'Settings specially for articles.';
 $txt['tp-helpfrontpage'] = 'The frontpage settings can be tweaked here.';
-$txt['tp-helparticles'] = 'These are your article categories and the amount of articles each holds. Also listed is the immediate subcategory(click further in to reveal more).';
+$txt['tp-helparticles'] = 'These are your article categories and the amount of articles each holds. Also listed is the immediate subcategory (click further in to reveal more).';
 
 $txt['tp-assignnewauthor'] = 'Author ID(change to re-assign to another)';
 $txt['tp-uncategorised'] = 'Uncategorized';
